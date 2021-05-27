@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: plotly-demo
+  labels:
+    name: plotly-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plotly-demo
+  namespace: plotly-demo
+  labels:
+    app: plotly-demo
+spec:
+  selector:
+    matchLabels:
+      app: plotly-demo    
+  template:
+    metadata:
+      labels:
+        app: plotly-demo
+    spec:
+      containers:
+        - name: plotly-demo-container
+          image: tuttlebr/plotly_demo:cuda11.0-ubuntu20.04
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+          ports:
+            - containerPort: 8050
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plotly-demo
+  namespace: plotly-demo
+  labels:
+    app: plotly-demo
+spec:
+  selector:
+    app: plotly-demo
+  type: NodePort
+  ports:
+    - targetPort: 8050
+      nodePort: 30050
+      port: 8050
+      name: http
+      protocol: TCP

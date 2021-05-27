@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  plotly_demo:
+    image: tuttlebr/plotly_demo:cuda${CUDA_VERSION}-${LINUX_VERSION}
+    ports:
+      - "${NODE_PORT}:8050"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - CUDA_VERSION=${CUDA_VERSION}
+        - LINUX_VERSION=${LINUX_VERSION}
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            count: 1
+            capabilities: [gpu]
